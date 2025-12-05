@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Administrativo - Jiu-Jitsu Combate</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/login.css">
+    
+    <!-- Script do Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <i class="fas fa-user-shield"></i>
+                <h1>Área Administrativa</h1>
+                <p>Faça login para gerenciar lutas e odds</p>
+            </div>
+            
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" class="form-control" placeholder="Insira seu email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" class="form-control" placeholder="Insira sua senha" required>
+                </div>
+                
+                <div class="form-message" id="login-message"></div>
+                
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-sign-in-alt"></i> Entrar
+                </button>
+            </form>
+            
+            <div class="login-footer">
+                <p>© 2025 Jiu-Jitsu Combate. Sistema de gestão de lutas</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/supabase.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('login-form');
+            const messageEl = document.getElementById('login-message');
+            
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
+                if (!email || !password) {
+                    messageEl.innerHTML = `
+                        <div class="message-error">
+                            <i class="fas fa-exclamation-circle"></i> 
+                            Por favor, preencha todos os campos
+                        </div>
+                    `;
+                    return;
+                }
+                
+                try {
+                    const result = await window.loginAdmin(email, password);
+                    
+                    if (result.success) {
+                        window.location.href = 'admin.html';
+                    } else {
+                        messageEl.innerHTML = `
+                            <div class="message-error">
+                                <i class="fas fa-exclamation-circle"></i> 
+                                ${result.message}
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    console.error('Erro no login:', error);
+                    messageEl.innerHTML = `
+                        <div class="message-error">
+                            <i class="fas fa-exclamation-circle"></i> 
+                            ${error.message || 'Erro ao conectar com o servidor'}
+                        </div>
+                    `;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
